@@ -21,7 +21,7 @@ namespace HealthChecks.UI.Core.Discovery.K8S
             {
                 case ServiceType.LoadBalancer:
                 case ServiceType.NodePort:
-                    address = GetLoadBalancerAddress(service);
+                    address = $"{service.Name()}.{service.Namespace()}";
                     break;
                 case ServiceType.ClusterIP:
                     address = service.Spec.ClusterIP;
@@ -74,7 +74,7 @@ namespace HealthChecks.UI.Core.Discovery.K8S
                     port = GetServicePort(service)?.Port;
                     break;
                 case ServiceType.NodePort:
-                    port = GetServicePort(service)?.NodePort;
+                    port = GetServicePort(service)?.Port;
                     break;
                 case ServiceType.ExternalName:
                     if (GetServicePortAnnotation(service) is string servicePortAnnotation && int.TryParse(servicePortAnnotation, out var servicePort))
