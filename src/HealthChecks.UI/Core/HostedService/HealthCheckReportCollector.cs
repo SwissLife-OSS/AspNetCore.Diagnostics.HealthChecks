@@ -101,7 +101,8 @@ namespace HealthChecks.UI.Core.HostedService
                 var response = await _httpClient.GetAsync(absoluteUri);
                 try
                 {
-                    return await response.As<UIHealthReport>();
+                    var res= await response.As<UIHealthReport>();
+                    return res.Entries == null ? UIHealthReport.CreateFrom(((int)response.StatusCode == 200)) : res;
                 }
                 catch
                 {
