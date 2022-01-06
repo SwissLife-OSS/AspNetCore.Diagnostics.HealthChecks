@@ -72,6 +72,16 @@ namespace HealthChecks.UI.Core
 
             return uiReport;
         }
+        public static UIHealthReport CreateFrom(bool healthy)
+        {
+          var uiReport = new UIHealthReport(new Dictionary<string, UIHealthReportEntry>(), TimeSpan.FromSeconds(0))
+          {
+            Status = healthy?UIHealthStatus.Healthy:UIHealthStatus.Unhealthy,
+          };
+
+          
+          return uiReport;
+        }
     }
     public enum UIHealthStatus
     {

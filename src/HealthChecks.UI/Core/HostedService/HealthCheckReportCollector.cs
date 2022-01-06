@@ -99,8 +99,16 @@ namespace HealthChecks.UI.Core.HostedService
                 var absoluteUri = GetEndpointUri(configuration);
 
                 var response = await _httpClient.GetAsync(absoluteUri);
-
-                return await response.As<UIHealthReport>();
+                try
+                {
+                    return await response.As<UIHealthReport>();
+                }
+                catch
+                {
+                    return UIHealthReport.CreateFrom(((int)response.StatusCode == 200));
+                }
+                
+                
             }
             catch (Exception exception)
             {
@@ -108,6 +116,7 @@ namespace HealthChecks.UI.Core.HostedService
 
                 return UIHealthReport.CreateFrom(exception);
             }
+           
         }
 
         private Uri GetEndpointUri(HealthCheckConfiguration configuration)
@@ -156,7 +165,7 @@ namespace HealthChecks.UI.Core.HostedService
 
             var lastExecutionTime = DateTime.UtcNow;
 
-            if (execution != null)
+            if (execution != null )
             {
 
                 if (execution.Uri != configuration.Uri)

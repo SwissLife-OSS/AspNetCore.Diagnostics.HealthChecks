@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using k8s.Models;
 
 namespace HealthChecks.UI.Core.Discovery.K8S
 {
@@ -90,11 +91,11 @@ namespace HealthChecks.UI.Core.Discovery.K8S
                 try
                 {
                     var services = await _discoveryClient.GetServices(_discoveryOptions.ServicesLabel, _discoveryOptions.Namespaces, cancellationToken);
-
                     if (services != null)
                     {
                         foreach (var item in services.Items)
                         {
+                            
                             try
                             {
                                 var serviceAddress = _addressFactory.CreateAddress(item);
@@ -104,7 +105,7 @@ namespace HealthChecks.UI.Core.Discovery.K8S
                                     var statusCode = await CallClusterService(serviceAddress);
                                     if (IsValidHealthChecksStatusCode(statusCode))
                                     {
-                                        await RegisterDiscoveredLiveness(livenessDbContext, serviceAddress, item.Metadata.Name);
+                                        await RegisterDiscoveredLiveness(livenessDbContext, serviceAddress, $"{item.Metadata.Namespace()} | {item.Metadata.Name}");
                                         _logger.LogInformation($"Registered discovered liveness on {serviceAddress} with name {item.Metadata.Name}");
                                     }
                                 }
